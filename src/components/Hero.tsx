@@ -2,33 +2,29 @@
 
 import { motion, useReducedMotion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { BRAND, COPY, PHOTOS } from '@/lib/content';
+import { COPY, PHOTOS } from '@/lib/content';
 import { useLocale } from './LanguageProvider';
 
 /**
  * HERO — the signature moment.
  *
+ * Audit pass 2 changes:
+ *  · Bottom arc text on the disc shortened to "Bangkok 2024 · Side A"
+ *    so the wraparound fits the path cleanly. Previously it overflowed
+ *    and read as the broken-looking "NGKOK · RECORDS PLAY, NOT" tail.
+ *  · Storefront photograph lifted from opacity 0.18 → 0.28 so the
+ *    yellow signage actually glows through behind the disc, instead of
+ *    reading as a generic dark wash.
+ *  · Added a quiet "Longlai" display title above the eyebrow on the
+ *    right column. The disc carries the brand mark visually; the
+ *    display title gives the page a typographic anchor for users who
+ *    scroll past the disc.
+ *
  * Layout:
  *  · Left two-thirds: a large vinyl record sits centred. On mount,
- *    the tonearm above it descends and the disc spins up. The
- *    wordmark "Longlai" lives on the centre label like a record
- *    sticker.
- *  · Right third: eyebrow, subtitle prose, dual CTAs (Reserve + See
- *    who's cooking).
- *
- * Scroll behaviour:
- *  · Scrolling down speeds up the disc (faster spin) and slightly
- *    deepens the amber glow underneath.
- *  · Scrolling up triggers a brief "rewind wobble" — the disc rotates
- *    counter to its base direction and the wordmark slips a touch.
- *
- * Background:
- *  · The Adam Birkan yellow-storefront photograph sits faded behind
- *    the disc, lit only at the corners — proof the room is real,
- *    even at low opacity.
- *
- * Reduced motion: disc is rendered static, tonearm sits at rest
- * position, photo stays put.
+ *    the tonearm above it descends and the disc spins up.
+ *  · Right third: display title, eyebrow, italic subtitle, body,
+ *    dual CTAs.
  */
 export default function Hero() {
   const { locale } = useLocale();
@@ -67,8 +63,9 @@ export default function Hero() {
       ref={ref}
       className="relative min-h-[100svh] w-full overflow-hidden bg-vinyl pt-[78px]"
     >
-      {/* Storefront photograph at very low opacity, warm-tinted */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.18]">
+      {/* Storefront photograph — lifted from 0.18 → 0.28 so the
+          yellow signage starts to glow through behind the disc. */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.28]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={PHOTOS.storefront}
@@ -79,11 +76,11 @@ export default function Hero() {
           loading="eager"
           decoding="async"
           className="absolute inset-0 w-full h-full object-cover object-[50%_55%]"
-          style={{ filter: 'saturate(0.7) contrast(1.06) brightness(0.85) sepia(0.18)' }}
+          style={{ filter: 'saturate(0.78) contrast(1.04) brightness(0.92) sepia(0.14)' }}
         />
         <div className="absolute inset-0" style={{
           background:
-            'radial-gradient(900px 700px at 50% 60%, rgba(217,154,58,0.18) 0%, rgba(14,10,7,0) 60%), linear-gradient(180deg, rgba(14,10,7,0.7) 0%, rgba(14,10,7,0.55) 50%, rgba(14,10,7,0.92) 100%)',
+            'radial-gradient(900px 700px at 50% 60%, rgba(217,154,58,0.18) 0%, rgba(14,10,7,0) 60%), linear-gradient(180deg, rgba(14,10,7,0.62) 0%, rgba(14,10,7,0.48) 50%, rgba(14,10,7,0.88) 100%)',
         }} />
       </div>
 
@@ -126,15 +123,28 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — eyebrow + body + CTAs. Reveals after the needle
-            has dropped (post-`played` flag). */}
+        {/* RIGHT — display wordmark, eyebrow, subtitle, body, CTAs.
+            Reveals after the needle has dropped (post-`played` flag). */}
         <motion.div
           className="lg:col-span-5 flex flex-col items-start lg:pl-4 lg:border-l border-[var(--rule-amber)] py-12 lg:py-0"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: played ? 1 : 0, y: played ? 0 : 24 }}
           transition={{ duration: 1.2, ease: [0.16, 0.84, 0.30, 1] }}
         >
-          <p className="eyebrow" lang={locale}>
+          {/* Display title — the brand mark in big Bowlby so the page
+              has a typographic anchor even when the disc isn't in
+              frame. Sits above the eyebrow to keep the visual order
+              (mark → subtitle → body) consistent with editorial press
+              card grammar. */}
+          <h1
+            className="display text-cream leading-[0.95] tracking-tight"
+            style={{ fontSize: 'clamp(56px, 7.4vw, 112px)' }}
+            lang={locale}
+          >
+            {COPY.hero.title[locale]}
+          </h1>
+
+          <p className="eyebrow mt-6" lang={locale}>
             {COPY.hero.eyebrow[locale]}
           </p>
 
@@ -171,11 +181,14 @@ export default function Hero() {
 
 /**
  * Record — the big disc, with grooves, a coloured centre label, and
- * the wordmark wrapped around it like a record sticker. The wordmark
- * is in display Bowlby on the upper half + Cormorant italic on the
- * lower half.
+ * the wordmark wrapped around it. Bottom arc shortened in audit pass
+ * 2 — was "Side A · Bangkok · Records play, not playlists" which
+ * overflowed the arc. Now "Bangkok 2024 · Side A" fits cleanly.
  */
 function Record({ locale, title }: { locale: string; title: string }) {
+  const bottomArcText = locale === 'en'
+    ? 'Bangkok 2024 · Side A'
+    : 'กรุงเทพ 2024 · Side A';
   return (
     <div className="relative w-full h-full">
       {/* Grooved disc — the .spin-disc class animates rotation */}
@@ -213,17 +226,17 @@ function Record({ locale, title }: { locale: string; title: string }) {
               {title}
             </textPath>
           </text>
-          {/* Bottom arc — italic subtitle */}
+          {/* Bottom arc — italic, shortened so the line fits the path */}
           <text
             fontFamily="var(--font-cormorant), Cormorant Garamond, serif"
             fontStyle="italic"
-            fontSize="10"
+            fontSize="11"
             fill="var(--cream)"
             letterSpacing="3"
             style={{ textTransform: 'uppercase' }}
           >
             <textPath href="#arc-bottom" startOffset="50%" textAnchor="middle">
-              Side A · Bangkok · {locale === 'en' ? 'Records play, not playlists' : 'แผ่นเสียงหมุน'}
+              {bottomArcText}
             </textPath>
           </text>
           {/* Spindle dot */}

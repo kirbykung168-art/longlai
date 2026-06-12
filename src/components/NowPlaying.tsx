@@ -5,12 +5,22 @@ import { useLocale } from './LanguageProvider';
 import Reveal from './Reveal';
 
 /**
- * NOW PLAYING — the rotating guest chef block. Designed as a "back
+ * NOW PLAYING - the rotating guest chef block. Designed as a "back
  * of the sleeve" card with the chef's name in display Bowlby and the
- * residency dates / discipline / signature track in monospace below.
+ * residency dates / discipline / signature track below.
  *
  * The card is the brand's monthly content surface: swap the
  * CURRENT_CHEF object in content.ts and this section updates.
+ *
+ * Audit pass 2:
+ *  - The JUNE 2026 corner tag pulled from bg-pop / text-cream to
+ *    bg-amber / text-vinyl so pop stays scarce for CTAs only.
+ *  - The right-side status label pulled from text-pop to text-vinyl/65
+ *    so the row reads as quiet metadata, not an alarm. The label
+ *    now reads from `c.statusLabel` ("Confirmed ten days out")
+ *    instead of "To be announced" - intentional brand framing of the
+ *    rotation, not a placeholder.
+ *  - The pull-quote left border pulled from border-pop to border-amber.
  */
 export default function NowPlaying() {
   const { locale } = useLocale();
@@ -23,7 +33,6 @@ export default function NowPlaying() {
       <div className="absolute top-0 left-0 right-0 gold-thread" />
 
       <div className="relative mx-auto max-w-[1320px] px-6 lg:px-10 grid lg:grid-cols-12 gap-12 lg:gap-16">
-        {/* LEFT — eyebrow, title, intro */}
         <Reveal className="lg:col-span-5">
           <p className="eyebrow">{n.eyebrow[locale]}</p>
           <h2
@@ -42,8 +51,6 @@ export default function NowPlaying() {
           </p>
         </Reveal>
 
-        {/* RIGHT — the back-of-sleeve card. Looks like the rear of
-            a 12" LP. */}
         <Reveal delay={0.15} className="lg:col-span-7">
           <article
             className="relative bg-cream text-vinyl p-8 lg:p-12"
@@ -51,18 +58,18 @@ export default function NowPlaying() {
               boxShadow: '0 18px 50px rgba(0,0,0,0.36), inset 0 0 0 1px rgba(14,10,7,0.12)',
             }}
           >
-            {/* Cardboard corner mark — like a hand-written shelf tag */}
-            <div className="absolute -top-4 -left-4 rotate-[-4deg] bg-pop text-cream mono uppercase tracking-[0.32em] text-[10px] px-3 py-1.5">
+            <div className="absolute -top-4 -left-4 rotate-[-4deg] bg-amber text-vinyl mono uppercase tracking-[0.32em] text-[10px] px-3 py-1.5">
               {c.monthLabel}
             </div>
 
-            {/* SIDE A / NOW PLAYING header */}
             <div className="flex items-baseline justify-between border-b border-vinyl/15 pb-5 mb-7">
               <p className="mono uppercase tracking-[0.42em] text-[10px] text-vinyl/55">
                 Now Playing
               </p>
-              <p className="mono uppercase tracking-[0.32em] text-[10px] text-pop">
-                {c.verified ? 'Confirmed' : 'To be announced'}
+              <p className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/65">
+                {c.verified
+                  ? 'Confirmed'
+                  : (c as { statusLabel?: string }).statusLabel ?? 'To be announced'}
               </p>
             </div>
 
@@ -78,19 +85,17 @@ export default function NowPlaying() {
               {c.discipline}
             </p>
 
-            {/* Dates */}
             <div className="mt-7 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 max-w-md">
               <p className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/55">Dates</p>
               <p className="font-sans text-[14px] text-vinyl">{c.dates}</p>
               <p className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/55">Side</p>
-              <p className="font-sans text-[14px] text-vinyl">A · monthly residency</p>
+              <p className="font-sans text-[14px] text-vinyl">A &middot; monthly residency</p>
               <p className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/55">Track</p>
               <p className="font-sans text-[14px] text-vinyl" lang={locale}>{c.signatureTrack[locale]}</p>
             </div>
 
-            {/* Back-of-sleeve bio */}
             <blockquote
-              className="display-it text-vinyl/85 mt-8 leading-[1.4] border-l-2 border-pop pl-5"
+              className="display-it text-vinyl/85 mt-8 leading-[1.4] border-l-2 border-amber pl-5"
               style={{ fontSize: 'clamp(18px, 2vw, 22px)' }}
               lang={locale}
             >
@@ -99,15 +104,15 @@ export default function NowPlaying() {
 
             <div className="mt-9 flex items-center gap-5">
               <a href="#reserve" className="btn btn-pop">
-                {COPY.hero.ctaReserve[locale]} <span className="btn-arrow">→</span>
+                {COPY.hero.ctaReserve[locale]} <span className="btn-arrow">&rarr;</span>
               </a>
               <a
                 href={BRAND.instagramUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/65 hover:text-pop transition-colors duration-500"
+                className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/65 hover:text-amber transition-colors duration-500"
               >
-                DM {BRAND.instagramHandle} ↗
+                DM {BRAND.instagramHandle} &uarr;
               </a>
             </div>
           </article>

@@ -5,13 +5,18 @@ import { useLocale } from './LanguageProvider';
 import Reveal from './Reveal';
 
 /**
- * TRACKLIST — the menu rendered as a 12" LP back cover. Side A is
+ * TRACKLIST - the menu rendered as a 12" LP back cover. Side A is
  * the chef-of-the-month set, Side B the house standards, plus a
- * bonus-tracks block for the bar. Each row is numbered (A1, A2, B1…)
- * and prices are written as runtimes — `02:50` reads as ฿250.
+ * bonus-tracks block for the bar. Each row is numbered (A1, A2, B1...)
+ * and prices are written as runtimes - `02:50` reads as ₿250.
  *
  * Liner-notes register: monospace numerals, italic Cormorant for
  * dish names, and a marker-style underline drawn on hover.
+ *
+ * Audit pass 2: the Side A "tone" token pulled from text-pop to
+ * text-amber-l so pop stays scarce. Both side numerals (A1/A2/B1)
+ * now read in warm vinyl temperature; only the Reserve CTAs carry
+ * the pop accent.
  */
 export default function Tracklist() {
   const { locale } = useLocale();
@@ -22,7 +27,6 @@ export default function Tracklist() {
       <div className="absolute inset-0 vinyl-crackle pointer-events-none" aria-hidden />
 
       <div className="relative mx-auto max-w-[1320px] px-6 lg:px-10">
-        {/* Header */}
         <div className="grid lg:grid-cols-[1fr_1fr] gap-12 items-end mb-16">
           <Reveal>
             <p className="eyebrow">{t.eyebrow[locale]}</p>
@@ -46,13 +50,11 @@ export default function Tracklist() {
           </Reveal>
         </div>
 
-        {/* Side A + Side B side-by-side */}
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
           <SideBlock side={TRACKLIST.sideA} sideTone="hot" />
           <SideBlock side={TRACKLIST.sideB} sideTone="cool" />
         </div>
 
-        {/* Bonus tracks · the bar */}
         <div className="mt-16">
           <SideBlock side={TRACKLIST.drinks} sideTone="bar" />
         </div>
@@ -69,21 +71,22 @@ function SideBlock({
   sideTone: 'hot' | 'cool' | 'bar';
 }) {
   const { locale } = useLocale();
+  // Side A pulled from pop-red to amber-l in audit pass 2 so pop is
+  // reserved for the Reserve CTAs and the disc label only.
   const tone =
-    sideTone === 'hot'  ? 'text-pop'    :
-    sideTone === 'cool' ? 'text-amber'  :
+    sideTone === 'hot'  ? 'text-amber-l' :
+    sideTone === 'cool' ? 'text-amber'   :
                           'text-cream/65';
 
   return (
     <Reveal>
       <div>
-        {/* Side label */}
         <div className="flex items-baseline justify-between border-b border-[var(--rule-amber)] pb-4 mb-6">
           <p className={`mono uppercase tracking-[0.42em] text-[11px] ${tone}`} lang={locale}>
             {side.label[locale]}
           </p>
           <p className="mono uppercase tracking-[0.32em] text-[10px] text-cream/40">
-            runtime ≈ price
+            runtime &asymp; price
           </p>
         </div>
 
