@@ -1,0 +1,196 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* — analog 70s/80s sleeve palette — */
+  --vinyl:    #0e0a07;
+  --tobacco:  #3a2618;
+  --amber:    #d99a3a;
+  --amber-l:  #e8b658;
+  --cream:    #f0e3c8;
+  --paper:    #f8eedb;
+  --pop:      #e64a26;
+  --pop-d:    #c33b1c;
+  --groove:   #1a120c;
+
+  /* easing curves — "groove" for sleeve-like inertia, "needle" for
+     spring-snap tonearm motions */
+  --groove: cubic-bezier(0.16, 0.84, 0.30, 1);
+  --needle: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --rule:        rgba(240, 227, 200, 0.16);
+  --rule-amber:  rgba(217, 154, 58, 0.42);
+}
+
+html, body {
+  background-color: var(--vinyl);
+  color: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+}
+
+/* === SHARED TYPOGRAPHY UTILITIES ============================== */
+.display      { font-family: var(--font-display), 'Bowlby One', Impact, serif; font-weight: 400; letter-spacing: 0.01em; }
+.display-it   { font-family: var(--font-cormorant), 'Cormorant Garamond', serif; font-style: italic; font-weight: 400; letter-spacing: -0.005em; }
+.mono         { font-family: var(--font-mono), 'IBM Plex Mono', Menlo, monospace; font-feature-settings: 'tnum'; }
+.eyebrow {
+  font-family: var(--font-mono), 'IBM Plex Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.42em;
+  font-size: 10.5px;
+  color: var(--amber);
+}
+
+/* === BUTTONS ============================== */
+.btn {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding: 14px 22px;
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 11px;
+  line-height: 1;
+  transition: all 700ms var(--groove);
+  border: 1px solid transparent;
+}
+.btn-pop {
+  background: var(--pop);
+  color: var(--cream);
+}
+.btn-pop:hover { background: var(--pop-d); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--cream);
+  border-color: var(--rule-amber);
+}
+.btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+.btn-arrow { transition: transform 400ms var(--needle); }
+.btn:hover .btn-arrow { transform: translateX(4px); }
+
+/* === RULES ============================== */
+.amber-rule {
+  display: inline-block;
+  width: 48px; height: 1px;
+  background: var(--amber);
+}
+.amber-rule.wide { width: 96px; }
+
+/* === RECORD GROOVES — radial stripes baked into a disc ============ */
+.record-grooves {
+  background:
+    repeating-radial-gradient(
+      circle at center,
+      var(--vinyl) 0px,
+      var(--vinyl) 1.4px,
+      var(--groove) 1.4px,
+      var(--groove) 1.6px
+    );
+}
+.record-label {
+  background:
+    radial-gradient(circle at center, var(--pop) 0%, var(--pop) 70%, var(--pop-d) 100%);
+}
+
+/* === SPIN ANIMATION ============================== */
+.spin-disc {
+  animation: spin-disc 3.6s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes spin-disc {
+  to { transform: rotate(360deg); }
+}
+
+/* a faster spin (used when scroll-velocity is high) */
+.spin-fast { animation-duration: 1.4s; }
+
+/* === TONEARM DROP ============================== */
+.tonearm {
+  transform-origin: 100% 0;
+  animation: tonearm-drop 2.4s var(--needle) 0.6s 1 forwards;
+}
+@keyframes tonearm-drop {
+  0%   { transform: rotate(-22deg); }
+  60%  { transform: rotate(2deg); }
+  80%  { transform: rotate(-3deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* === MARQUEE TICKER ============================== */
+.marquee {
+  display: flex;
+  gap: 64px;
+  animation: marquee 38s linear infinite;
+  white-space: nowrap;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* === VU METER BARS ============================== */
+.vu-bar {
+  animation: vu-pulse 0.9s ease-in-out infinite alternate;
+  transform-origin: 50% 100%;
+}
+@keyframes vu-pulse {
+  from { transform: scaleY(0.4); opacity: 0.6; }
+  to   { transform: scaleY(1);   opacity: 1; }
+}
+
+/* === VINYL CRACKLE GRAIN OVERLAY ==========================
+   A soft sepia dust + scratch layer baked into a tiled radial-noise
+   gradient. Sits at pointer-events:none across pages with mix-blend
+   so it interacts with darker frames. */
+.vinyl-crackle::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 12% 28%, rgba(217,154,58,0.10) 0px, transparent 1.4px),
+    radial-gradient(circle at 73% 42%, rgba(217,154,58,0.08) 0px, transparent 1.6px),
+    radial-gradient(circle at 41% 81%, rgba(240,227,200,0.07) 0px, transparent 1.2px),
+    radial-gradient(circle at 88% 14%, rgba(240,227,200,0.05) 0px, transparent 1.0px),
+    radial-gradient(circle at 22% 56%, rgba(230,74,38,0.06) 0px, transparent 1.5px);
+  background-size: 240px 240px, 320px 320px, 180px 180px, 260px 260px, 300px 300px;
+  background-position: 0 0, 80px 60px, 40px 120px, 160px 20px, 100px 180px;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+@keyframes crackle-drift {
+  0%   { background-position: 0 0, 80px 60px, 40px 120px, 160px 20px, 100px 180px; }
+  100% { background-position: 14px 8px, 96px 70px, 50px 132px, 178px 26px, 116px 190px; }
+}
+.vinyl-crackle.live::before { animation: crackle-drift 9s ease-in-out infinite alternate; }
+
+/* === MARKER UNDERLINE — drawn on hover ============================== */
+.marker-underline { position: relative; }
+.marker-underline::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 100%;
+  bottom: -4px;
+  height: 2px;
+  background: var(--amber);
+  transition: right 600ms var(--groove);
+}
+.marker-underline:hover::after { right: 0; }
+.marker-underline.active::after { right: 0; }
+
+/* === REDUCED MOTION ============================== */
+@media (prefers-reduced-motion: reduce) {
+  .spin-disc, .tonearm, .marquee, .vu-bar, .vinyl-crackle.live::before {
+    animation: none !important;
+  }
+  .spin-disc { transform: none; }
+  .tonearm   { transform: rotate(0deg); }
+}
+
+/* === SECTION RULES ============================== */
+.gold-thread {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%, var(--amber) 50%, transparent 100%);
+  opacity: 0.55;
+}
