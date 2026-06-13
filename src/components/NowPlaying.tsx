@@ -1,26 +1,18 @@
 'use client';
 
-import { BRAND, COPY, CURRENT_CHEF } from '@/lib/content';
+import { BRAND, COPY, CURRENT_CHEF, PHOTOS } from '@/lib/content';
 import { useLocale } from './LanguageProvider';
 import Reveal from './Reveal';
 
 /**
- * NOW PLAYING - the rotating guest chef block. Designed as a "back
- * of the sleeve" card with the chef's name in display Bowlby and the
- * residency dates / discipline / signature track below.
+ * NOW PLAYING — the back-of-sleeve card.
  *
- * The card is the brand's monthly content surface: swap the
- * CURRENT_CHEF object in content.ts and this section updates.
- *
- * Audit pass 2:
- *  - The JUNE 2026 corner tag pulled from bg-pop / text-cream to
- *    bg-amber / text-vinyl so pop stays scarce for CTAs only.
- *  - The right-side status label pulled from text-pop to text-vinyl/65
- *    so the row reads as quiet metadata, not an alarm. The label
- *    now reads from `c.statusLabel` ("Confirmed ten days out")
- *    instead of "To be announced" - intentional brand framing of the
- *    rotation, not a placeholder.
- *  - The pull-quote left border pulled from border-pop to border-amber.
+ * Audit pass 4: a real interior photograph (the room at night, with
+ * the booth set up) is bound into the back-of-sleeve card as a small
+ * tucked-in polaroid in the top-right. Gives the chef card a sense
+ * of "place" instead of being a pure typographic block. The card
+ * stays cream/paper so it reads as a sleeve, and the polaroid sits
+ * slightly rotated and shadowed - like it was clipped onto the card.
  */
 export default function NowPlaying() {
   const { locale } = useLocale();
@@ -62,7 +54,27 @@ export default function NowPlaying() {
               {c.monthLabel}
             </div>
 
-            <div className="flex items-baseline justify-between border-b border-vinyl/15 pb-5 mb-7">
+            {/* Tucked-in polaroid - a real photo of the room at night,
+                clipped to the top-right of the back-of-sleeve card. */}
+            <div className="absolute -top-3 -right-5 lg:-top-4 lg:-right-6 w-[120px] lg:w-[160px] rotate-[5deg] bg-paper p-2 z-10 hidden sm:block"
+              style={{ boxShadow: '0 8px 20px rgba(0,0,0,0.35)' }}
+              aria-hidden
+            >
+              <div className="relative w-full aspect-[1/1.15] overflow-hidden bg-tobacco">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={PHOTOS.roomNight}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: '50% 50%', filter: 'saturate(0.92) contrast(1.05)' }}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <p className="mono uppercase tracking-[0.32em] text-[8.5px] text-vinyl/65 mt-1.5 px-0.5">The room &middot; last night</p>
+            </div>
+
+            <div className="flex items-baseline justify-between border-b border-vinyl/15 pb-5 mb-7 mt-2">
               <p className="mono uppercase tracking-[0.42em] text-[10px] text-vinyl/55">
                 Now Playing
               </p>
@@ -112,7 +124,7 @@ export default function NowPlaying() {
                 rel="noreferrer"
                 className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/65 hover:text-amber transition-colors duration-500"
               >
-                DM {BRAND.instagramHandle} &uarr;
+                DM {BRAND.instagramHandle} &uarr;&#xfe0e;
               </a>
             </div>
           </article>

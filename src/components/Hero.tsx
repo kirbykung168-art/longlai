@@ -8,17 +8,24 @@ import { useLocale } from './LanguageProvider';
 /**
  * HERO - the signature moment.
  *
- * Audit pass 3 fix:
- *  - Scroll-velocity disc spin now drives a CSS custom property
- *    (--spin-dur) on the outer wrapper. Previously the framer style
- *    set animation-duration directly on a parent div, but the actual
- *    .spin-disc element is two nesting levels deeper - and CSS does
- *    NOT cascade animation-duration to descendants. The disc was
- *    therefore stuck at the static 3.6s spin regardless of scroll.
- *    The custom property approach cascades cleanly.
- *  - Rewind tilt threshold widened: now responds at lower negative
- *    velocity so a user scrolling up at normal wheel speed gets the
- *    visible pitch-down wobble instead of needing a violent flick.
+ * Audit pass 4 fix - disc rotation visibility.
+ *   The CSS .spin-disc animation HAD been running correctly all
+ *   along (getAnimations() reports playState=running with rotating
+ *   transform matrices). But the rotation was visually invisible
+ *   because the .spin-disc class was only on the GROOVES layer -
+ *   concentric circles, so rotation produces zero apparent motion.
+ *   The wordmark SVG ("LONGLAI / BANGKOK 2024 - SIDE A") was on a
+ *   separate, non-rotating sibling div, so the disc's spin never
+ *   showed up on the page.
+ *
+ *   Fix: hoist .spin-disc onto the outer wrapper inside Record so
+ *   everything asymmetric (the wordmark text, the label colour, the
+ *   inner ring) rotates as a single unit. The white "shine"
+ *   highlight stays outside the spin since stage lighting wouldn't
+ *   move with the disc.
+ *
+ *   The --spin-dur custom property and scroll-velocity wiring from
+ *   audit pass 3 are preserved unchanged.
  */
 export default function Hero() {
   const { locale } = useLocale();
@@ -36,17 +43,12 @@ export default function Hero() {
   const scrollVel   = useVelocity(scrollY);
   const smoothVel   = useSpring(scrollVel, { stiffness: 60, damping: 18 });
 
-  // Base spin duration 3.6s. Map velocity magnitude to a shorter
-  // duration so fast scrolls visibly spin up the disc. Clamped to
-  // [1.0s, 3.6s] so it never stops or goes negative.
   const spinSeconds = useTransform(smoothVel, (v) => {
     const mag = Math.min(Math.abs(v), 4000);
     return (3.6 - (mag / 4000) * 2.6).toFixed(2);
   });
   const spinDur = useMotionTemplate`${spinSeconds}s`;
 
-  // Rewind tilt: only on negative velocity (scrolling up). Threshold
-  // widened (was 3000 - now 1500) so normal upward scroll registers.
   const rewindTilt = useTransform(smoothVel, (v) => {
     if (v >= 0) return 0;
     const mag = Math.min(Math.abs(v), 1500);
@@ -85,12 +87,6 @@ export default function Hero() {
           <div className="relative w-[min(86vw,560px)] aspect-square">
             <Tonearm reduced={!!reduced} />
 
-            {/* Outer wrapper drives BOTH:
-                  - rewind tilt via framer rotate (a real CSS transform)
-                  - the --spin-dur custom property that the inner
-                    .spin-disc element inherits and reads from its
-                    animation-duration. The custom property cascades
-                    through the DOM; animation-duration does not. */}
             <motion.div
               className="absolute inset-0"
               style={
@@ -98,7 +94,6 @@ export default function Hero() {
                   ? undefined
                   : {
                       rotate: rewindTilt,
-                      // framer accepts MotionValue<string> as a CSS variable.
                       ['--spin-dur' as string]: spinDur as unknown as string,
                     }
               }
@@ -164,57 +159,62 @@ export default function Hero() {
   );
 }
 
+/**
+ * Record - the big disc.
+ *
+ * Audit pass 4: the .spin-disc class is now on the OUTER rotating
+ * wrapper that contains the grooves, the inner ring, the label, AND
+ * the wordmark SVG. Previously .spin-disc was only on the grooves
+ * (concentric, so rotation was invisible) while the wordmark sat on
+ * a separate, never-rotating sibling div. The "shine" highlight
+ * stays outside the spin so the light source feels fixed in the room.
+ */
 function Record({ locale, title }: { locale: string; title: string }) {
   const bottomArcText = locale === 'en'
     ? 'Bangkok 2024 · Side A'
     : 'กรุงเทพ 2024 · Side A';
   return (
     <div className="relative w-full h-full">
-      <div className="absolute inset-0 rounded-full record-grooves spin-disc" />
-
-      <div className="absolute inset-[28%] rounded-full border border-amber/40" />
-
-      <div className="absolute inset-[30%] rounded-full record-label flex items-center justify-center">
-        <svg viewBox="-100 -100 200 200" className="w-full h-full" aria-label={title}>
-          <defs>
-            <path
-              id="arc-top"
-              d="M -70 0 A 70 70 0 0 1 70 0"
-              fill="none"
-            />
-            <path
-              id="arc-bottom"
-              d="M -64 6 A 64 64 0 0 0 64 6"
-              fill="none"
-            />
-          </defs>
-          <text
-            fontFamily="var(--font-display), Bowlby One, Impact, serif"
-            fontSize="22"
-            fill="var(--cream)"
-            letterSpacing="2"
-            style={{ textTransform: 'uppercase' }}
-          >
-            <textPath href="#arc-top" startOffset="50%" textAnchor="middle">
-              {title}
-            </textPath>
-          </text>
-          <text
-            fontFamily="var(--font-cormorant), Cormorant Garamond, serif"
-            fontStyle="italic"
-            fontSize="11"
-            fill="var(--cream)"
-            letterSpacing="3"
-            style={{ textTransform: 'uppercase' }}
-          >
-            <textPath href="#arc-bottom" startOffset="50%" textAnchor="middle">
-              {bottomArcText}
-            </textPath>
-          </text>
-          <circle cx="0" cy="0" r="4" fill="var(--vinyl)" />
-        </svg>
+      {/* The rotating disc-as-a-whole - grooves, ring, label, wordmark.
+          Everything asymmetric goes here so the rotation reads. */}
+      <div className="absolute inset-0 spin-disc">
+        <div className="absolute inset-0 rounded-full record-grooves" />
+        <div className="absolute inset-[28%] rounded-full border border-amber/40" />
+        <div className="absolute inset-[30%] rounded-full record-label flex items-center justify-center">
+          <svg viewBox="-100 -100 200 200" className="w-full h-full" aria-label={title}>
+            <defs>
+              <path id="arc-top"    d="M -70 0 A 70 70 0 0 1 70 0" fill="none" />
+              <path id="arc-bottom" d="M -64 6 A 64 64 0 0 0 64 6" fill="none" />
+            </defs>
+            <text
+              fontFamily="var(--font-display), Bowlby One, Impact, serif"
+              fontSize="22"
+              fill="var(--cream)"
+              letterSpacing="2"
+              style={{ textTransform: 'uppercase' }}
+            >
+              <textPath href="#arc-top" startOffset="50%" textAnchor="middle">
+                {title}
+              </textPath>
+            </text>
+            <text
+              fontFamily="var(--font-cormorant), Cormorant Garamond, serif"
+              fontStyle="italic"
+              fontSize="11"
+              fill="var(--cream)"
+              letterSpacing="3"
+              style={{ textTransform: 'uppercase' }}
+            >
+              <textPath href="#arc-bottom" startOffset="50%" textAnchor="middle">
+                {bottomArcText}
+              </textPath>
+            </text>
+            <circle cx="0" cy="0" r="4" fill="var(--vinyl)" />
+          </svg>
+        </div>
       </div>
 
+      {/* Static shine - the room's light source doesn't move with the disc. */}
       <div
         className="absolute inset-0 rounded-full pointer-events-none"
         style={{
