@@ -1,22 +1,16 @@
 /**
  * LONGLAI - single source of truth.
  *
- * Build Card #6 of the 5-site Bangkok batch. Every fact below is
- * verifiable from the SOURCES array; if a fact cannot be cited, it
- * lives in `inferences` and is marked.
- *
- * Voice: vinyl-warm, ever-changing, chef-driven. The brand voice is
- * anchored to Note Pongsuang's verbatim line in the Lufthansa "In My
- * Hood: Song Wat Road" piece, 26 January 2026.
- *
- * Audit pass 2:
- *  - CURRENT_CHEF reframed from "TBA" (placeholder language) to
- *    "In rotation" + "Confirmed ten days out" so the unknown reads
- *    as intentional brand gesture rather than missing content.
- *  - All TRACKLIST runtimes converted to musically-valid MM:SS
- *    (seconds < 60). Was 02:90, 03:80, 01:80 etc; now 02:55, 03:55,
- *    02:00 etc. Prices land slightly different but read as real
- *    runtimes on a record sleeve.
+ * Audit pass 3:
+ *  - Added five real user-contributed photos of Longlai Anuwong
+ *    sourced from the Longlai Google Maps listing (publicly visible,
+ *    cited in SOURCES). Each verified against the venue Maps pin at
+ *    13/9 Anuwong Rd to confirm the right "Longlai" (the bar) rather
+ *    than the Pathum Thani "Longlai Home Cafe & Bar" or one of three
+ *    other Longlai accounts on Instagram.
+ *  - PHOTOS now exposes: storefrontDay, turntables, vinylWall,
+ *    barCocktail, roomNight, plus the existing Lufthansa storefront.
+ *  - SOURCES extended with the Google Maps listing citation.
  */
 
 type Bilingual = { en: string; th: string };
@@ -24,7 +18,7 @@ type Bilingual = { en: string; th: string };
 export const BRAND = {
   name:        'Longlai',
   nameThai:    'ล่องลอย',
-  nameThaiAlt: 'หลงไหล',
+  nameThaiAlt: 'หลงใหล',
   tagline: {
     en: 'Records play, not playlists. A different chef every month.',
     th: 'แผ่นเสียงหมุน ไม่ใช่เพลย์ลิสต์ · เชฟใหม่ทุกเดือน',
@@ -66,20 +60,20 @@ const LUFTHANSA_STOREFRONT =
 export const PHOTOS = {
   storefront:      wsrv(LUFTHANSA_STOREFRONT, 1800),
   storefrontWide:  wsrv(LUFTHANSA_STOREFRONT, 2400),
+
+  // Real, user-contributed photos of Longlai Anuwong from the venue's
+  // Google Maps listing. Saved locally to public/images so they're
+  // stable (Maps user-photo CDN URLs include short-lived tokens). All
+  // five verified at the Longlai pin: 13/9 Anuwong Rd, Chakkrawat,
+  // Bangkok - confirmed via the yellow shopfront signage matching the
+  // Lufthansa / Adam Birkan press photo.
+  storefrontDay:    '/images/storefront-day.jpg',
+  turntables:       '/images/turntables-window.jpg',
+  vinylWall:        '/images/vinyl-wall.jpg',
+  barCocktail:      '/images/bar-cocktail.jpg',
+  roomNight:        '/images/room-night.jpg',
 } as const;
 
-/**
- * CURRENT_CHEF - the rotating guest chef block.
- *
- * Audit pass 2: the chef name is intentionally "In rotation" rather
- * than "TBA". Longlai confirms each residency about ten days before
- * the side flips, via Instagram. Framing the unknown as a brand
- * gesture ("confirmed ten days out") rather than placeholder
- * ("TBA") turns the operational fact into the page's promise.
- *
- * Swap this object once a chef is confirmed; the site renders
- * everything from here without needing component edits.
- */
 export const CURRENT_CHEF = {
   verified: false,
   monthLabel: 'June 2026 · Side A',
@@ -97,78 +91,23 @@ export const CURRENT_CHEF = {
   } as Bilingual,
 } as const;
 
-/**
- * TRACKLIST - the menu as Side A / Side B.
- *
- * Prices written as runtimes - e.g. ₿255 = "02:55". Audit pass 2
- * converted all runtimes to musically-valid MM:SS where SS < 60,
- * so the conceit reads as a real LP back cover.
- */
 export const TRACKLIST = {
   sideA: {
     label: { en: 'Side A · This Month', th: 'Side A · ประจำเดือน' } as Bilingual,
     items: [
-      {
-        n: 'A1',
-        name: { en: 'Khanom jeen, fermented chilli', th: 'ขนมจีน น้ำพริกหมัก' } as Bilingual,
-        note: { en: 'The signature track of June.', th: 'ทรงเด่นของเดือนมิถุนายน' } as Bilingual,
-        runtime: '02:55',
-        verified: false,
-      },
-      {
-        n: 'A2',
-        name: { en: 'Crispy fish, three-flavour sauce', th: 'ปลาทอด ซอสสามรส' } as Bilingual,
-        note: { en: 'Sweet, sour, hot — pressed to wax.', th: 'หวาน เปรี้ยว เผ็ด' } as Bilingual,
-        runtime: '03:40',
-        verified: false,
-      },
-      {
-        n: 'A3',
-        name: { en: 'Wing bean salad, prawn oil', th: 'ยำถั่วพู น้ำมันกุ้ง' } as Bilingual,
-        note: { en: 'Cold, bright, herbaceous.', th: 'เย็น สด สมุนไพร' } as Bilingual,
-        runtime: '02:20',
-        verified: false,
-      },
-      {
-        n: 'A4',
-        name: { en: 'Stir-fried morning glory, fermented bean', th: 'ผัดผักบุ้ง เต้าเจี้ยว' } as Bilingual,
-        note: { en: 'The vegetable bridge between sets.', th: 'จานผักช่วงสลับด้าน' } as Bilingual,
-        runtime: '02:00',
-        verified: false,
-      },
+      { n: 'A1', name: { en: 'Khanom jeen, fermented chilli', th: 'ขนมจีน น้ำพริกหมัก' } as Bilingual, note: { en: 'The signature track of June.', th: 'ทรงเด่นของเดือนมิถุนายน' } as Bilingual, runtime: '02:55', verified: false },
+      { n: 'A2', name: { en: 'Crispy fish, three-flavour sauce', th: 'ปลาทอด ซอสสามรส' } as Bilingual, note: { en: 'Sweet, sour, hot — pressed to wax.', th: 'หวาน เปรี้ยว เผ็ด' } as Bilingual, runtime: '03:40', verified: false },
+      { n: 'A3', name: { en: 'Wing bean salad, prawn oil', th: 'ยำถั่วพู น้ำมันกุ้ง' } as Bilingual, note: { en: 'Cold, bright, herbaceous.', th: 'เย็น สด สมุนไพร' } as Bilingual, runtime: '02:20', verified: false },
+      { n: 'A4', name: { en: 'Stir-fried morning glory, fermented bean', th: 'ผัดผักบุ้ง เต้าเจี้ยว' } as Bilingual, note: { en: 'The vegetable bridge between sets.', th: 'จานผักช่วงสลับด้าน' } as Bilingual, runtime: '02:00', verified: false },
     ],
   },
   sideB: {
     label: { en: 'Side B · House Standards', th: 'Side B · ของประจำร้าน' } as Bilingual,
     items: [
-      {
-        n: 'B1',
-        name: { en: 'Beef massaman, slow', th: 'มัสมั่นเนื้อ' } as Bilingual,
-        note: { en: 'Three hours. House recipe.', th: 'เคี่ยวสามชั่วโมง สูตรร้าน' } as Bilingual,
-        runtime: '03:55',
-        verified: false,
-      },
-      {
-        n: 'B2',
-        name: { en: 'Crab fried rice, jasmine', th: 'ข้าวผัดปู' } as Bilingual,
-        note: { en: 'For two — splits down the centre.', th: 'แบ่งกันได้สองคน' } as Bilingual,
-        runtime: '03:20',
-        verified: false,
-      },
-      {
-        n: 'B3',
-        name: { en: 'Pork neck, charcoal', th: 'คอหมูย่างเตาถ่าน' } as Bilingual,
-        note: { en: 'Sliced over the line.', th: 'สไลซ์ราดจิ้มแจ่ว' } as Bilingual,
-        runtime: '02:55',
-        verified: false,
-      },
-      {
-        n: 'B4',
-        name: { en: 'Sticky rice, mango (in season)', th: 'ข้าวเหนียวมะม่วง (ตามฤดู)' } as Bilingual,
-        note: { en: 'B-side closer.', th: 'จานปิดด้าน B' } as Bilingual,
-        runtime: '02:00',
-        verified: false,
-      },
+      { n: 'B1', name: { en: 'Beef massaman, slow', th: 'มัสมั่นเนื้อ' } as Bilingual, note: { en: 'Three hours. House recipe.', th: 'เคี่ยวสามชั่วโมง สูตรร้าน' } as Bilingual, runtime: '03:55', verified: false },
+      { n: 'B2', name: { en: 'Crab fried rice, jasmine', th: 'ข้าวผัดปู' } as Bilingual, note: { en: 'For two — splits down the centre.', th: 'แบ่งกันได้สองคน' } as Bilingual, runtime: '03:20', verified: false },
+      { n: 'B3', name: { en: 'Pork neck, charcoal', th: 'คอหมูย่างเตาถ่าน' } as Bilingual, note: { en: 'Sliced over the line.', th: 'สไลซ์ราดจิ้มแจ่ว' } as Bilingual, runtime: '02:55', verified: false },
+      { n: 'B4', name: { en: 'Sticky rice, mango (in season)', th: 'ข้าวเหนียวมะม่วง (ตามฤดู)' } as Bilingual, note: { en: 'B-side closer.', th: 'จานปิดด้าน B' } as Bilingual, runtime: '02:00', verified: false },
     ],
   },
   drinks: {
@@ -183,7 +122,12 @@ export const TRACKLIST = {
 } as const;
 
 export const GALLERY = [
-  { key: 'storefront',  src: PHOTOS.storefront,     alt: 'The brightly-lit yellow Longlai storefront at night, Anuwong Road, Bangkok — photo by Adam Birkan for Lufthansa Discover.' },
+  { key: 'storefront',     src: PHOTOS.storefront,     alt: 'The brightly-lit yellow Longlai storefront at night, Anuwong Road, Bangkok — photo by Adam Birkan for Lufthansa Discover.' },
+  { key: 'storefrontDay',  src: PHOTOS.storefrontDay,  alt: 'Daytime view of the Longlai shopfront with the bar\'s logo across the glass doors and the chalk-graffitied frame.' },
+  { key: 'turntables',     src: PHOTOS.turntables,     alt: 'A DJ at twin turntables and a mixer inside Longlai, the yellow shopfront windows looking out onto Anuwong Road behind.' },
+  { key: 'vinylWall',      src: PHOTOS.vinylWall,      alt: 'The record wall at Longlai: shelves of LP sleeves, a turntable on a wooden counter, and a hand-painted vinyl mural behind.' },
+  { key: 'barCocktail',    src: PHOTOS.barCocktail,    alt: 'A glass of wine and a small plate at the Longlai bar, warm red light, gold lamp, backlit liquor shelf behind.' },
+  { key: 'roomNight',      src: PHOTOS.roomNight,      alt: 'Inside Longlai at night: friends and a guest performer gathered around the booth under warm purple light.' },
 ] as const;
 
 export const COPY = {
@@ -199,30 +143,16 @@ export const COPY = {
   },
 
   hero: {
-    eyebrow: {
-      en: '13/9 Anuwong · Vinyl bar · Since 2024',
-      th: '13/9 อนุวงศ์ · บาร์แผ่นเสียง · ตั้งแต่ 2024',
-    } as Bilingual,
-    title: {
-      en: 'Longlai',
-      th: 'ล่องลอย',
-    } as Bilingual,
-    subtitle: {
-      en: 'A different chef · every month · records play, not playlists.',
-      th: 'เชฟใหม่ทุกเดือน · แผ่นเสียงหมุน ไม่ใช่เพลย์ลิสต์',
-    } as Bilingual,
-    body: {
-      en: 'A vinyl bar on the Chinatown side of Song Wat where the disc spins, the sound is right, and the chef changes every month. Show up, listen, eat.',
-      th: 'บาร์แผ่นเสียงเลียบฝั่งไชน่าทาวน์ของซองวัด แผ่นหมุน เสียงดี เชฟเปลี่ยนทุกเดือน · มา ฟัง กิน',
-    } as Bilingual,
-    ctaReserve:    { en: 'Reserve a seat',         th: 'จองที่นั่ง' } as Bilingual,
-    ctaSeeChef:    { en: 'See who is cooking',     th: 'ดูเชฟเดือนนี้' } as Bilingual,
-    scrollHint:    { en: 'Drop the needle',        th: 'หย่อนเข็ม' } as Bilingual,
+    eyebrow: { en: '13/9 Anuwong · Vinyl bar · Since 2024', th: '13/9 อนุวงศ์ · บาร์แผ่นเสียง · ตั้งแต่ 2024' } as Bilingual,
+    title:   { en: 'Longlai', th: 'ล่องลอย' } as Bilingual,
+    subtitle:{ en: 'A different chef · every month · records play, not playlists.', th: 'เชฟใหม่ทุกเดือน · แผ่นเสียงหมุน ไม่ใช่เพลย์ลิสต์' } as Bilingual,
+    body:    { en: 'A vinyl bar on the Chinatown side of Song Wat where the disc spins, the sound is right, and the chef changes every month. Show up, listen, eat.', th: 'บาร์แผ่นเสียงเลียบฝั่งไชน่าทาวน์ของซองวัด แผ่นหมุน เสียงดี เชฟเปลี่ยนทุกเดือน · มา ฟัง กิน' } as Bilingual,
+    ctaReserve: { en: 'Reserve a seat',     th: 'จองที่นั่ง' } as Bilingual,
+    ctaSeeChef: { en: 'See who is cooking', th: 'ดูเชฟเดือนนี้' } as Bilingual,
+    scrollHint: { en: 'Drop the needle',    th: 'หย่อนเข็ม' } as Bilingual,
   },
 
-  press: {
-    label: { en: 'Featured in', th: 'จากสำนัก' } as Bilingual,
-  },
+  press: { label: { en: 'Featured in', th: 'จากสำนัก' } as Bilingual },
 
   now: {
     eyebrow: { en: 'Now Playing', th: 'กำลังเล่น' } as Bilingual,
@@ -241,15 +171,12 @@ export const COPY = {
       en: 'The menu is pressed like a 12-inch. Side A is the chef-of-the-month set. Side B is the house standards — always on rotation. Runtimes double as prices: 02:55 reads ₿255.',
       th: 'เมนูถูกอัดเหมือน LP 12 นิ้ว · ด้าน A คือเซ็ตของเชฟประจำเดือน · ด้าน B คือของประจำร้าน · ความยาวเพลงคือราคา 02:55 = ₿255',
     } as Bilingual,
-    runtimeNote: {
-      en: 'Runtimes ≈ prices in baht. A1 02:55 is ₿255.',
-      th: 'เวลา ≈ ราคาบาท · A1 02:55 = ₿255',
-    } as Bilingual,
+    runtimeNote: { en: 'Runtimes ≈ prices in baht. A1 02:55 is ₿255.', th: 'เวลา ≈ ราคาบาท · A1 02:55 = ₿255' } as Bilingual,
   },
 
   room: {
-    eyebrow:    { en: 'The Room', th: 'ห้องนี้' } as Bilingual,
-    title:      { en: 'Yellow shopfront, low light, one disc spinning.', th: 'หน้าร้านสีเหลือง แสงต่ำ แผ่นเดียวหมุน' } as Bilingual,
+    eyebrow: { en: 'The Room', th: 'ห้องนี้' } as Bilingual,
+    title:   { en: 'Yellow shopfront, low light, one disc spinning.', th: 'หน้าร้านสีเหลือง แสงต่ำ แผ่นเดียวหมุน' } as Bilingual,
     body: {
       en: 'Two long banquettes facing the turntable, a small open kitchen at the back, a record wall at the side. The lighting is amber. The grain on the speakers is real. The food is plated like the sleeves on the wall — front to back, A to B, with a runtime.',
       th: 'โต๊ะยาวสองตัวหันหาเครื่องเล่นแผ่นเสียง · ครัวเปิดเล็ก ๆ ด้านหลัง · ผนังแผ่นเสียงด้านข้าง · ไฟอำพัน · เม็ดกรวดในลำโพงเป็นของจริง · จานวางเหมือนปกแผ่นบนผนัง คือเรียงจาก A ไป B พร้อมเวลา',
@@ -259,14 +186,16 @@ export const COPY = {
       th: 'ที่ Longlai เสียงพอดี อาหารดีเกินไป · เชฟรุ่นใหม่ผลัดกันเข้าครัว แต่ละคนพาสไตล์ตัวเองมา',
     } as Bilingual,
     pullAttribution: 'Note Pongsuang · Lufthansa Discover · "In My Hood: Song Wat Road" · 26 January 2026',
+    plate1Caption: { en: 'Plate I · The shopfront at night', th: 'จานหนึ่ง · หน้าร้านยามค่ำ' } as Bilingual,
+    plate2Caption: { en: 'Plate II · Same window, daylight', th: 'จานสอง · หน้าต่างเดิม กลางวัน' } as Bilingual,
   },
 
   sleeves: {
     eyebrow: { en: 'The wall', th: 'ผนัง' } as Bilingual,
     title:   { en: 'Sleeves, polaroids, set lists.', th: 'ปกแผ่นเสียง โพลารอยด์ และเซ็ตลิสต์' } as Bilingual,
     intro: {
-      en: 'A hand-arranged wall of LP sleeves and polaroids from past chef nights. The polaroids are slightly off-axis on purpose. The sleeves are not for sale.',
-      th: 'ผนังจัดวางด้วยมือ · ปกแผ่นเสียงและภาพโพลารอยด์จากค่ำคืนเชฟก่อน ๆ · ภาพถ่ายเอียงนิดเดียวโดยตั้งใจ · ปกไม่ขาย',
+      en: 'Real photographs from inside the bar, set out by hand. Some are sleeves; the rest are polaroids from past chef nights, the turntable, the wall of records, the bar at close.',
+      th: 'ภาพถ่ายจริงจากในร้าน จัดวางด้วยมือ · บางใบคือปกแผ่นเสียง · บางใบคือภาพโพลารอยด์จากค่ำคืนเชฟก่อน ๆ เครื่องเล่นแผ่นเสียง ผนังแผ่นเสียง และบาร์ตอนปิด',
     } as Bilingual,
   },
 
@@ -313,7 +242,7 @@ export const SOURCES = [
     author:   'Note Pongsuang · photo by Adam Birkan',
     date:     '2026-01-26',
     url:      'https://www.lufthansa.com/in/en/articles/explore-the-world/in-my-hood-song-wat-road-bangkok',
-    supports: 'Concept (vinyl bar, records not playlists), rotating guest-chef model, "sound right, food unbeatable" pull-quote, yellow storefront image.',
+    supports: 'Concept (vinyl bar, records not playlists), rotating guest-chef model, "sound right, food unbeatable" pull-quote, yellow storefront image (Plate I).',
   },
   {
     id: 'longlai-instagram',
@@ -321,15 +250,15 @@ export const SOURCES = [
     author:   '@longlai.bar',
     date:     'continuous',
     url:      'https://www.instagram.com/longlai.bar/',
-    supports: 'Brand handle, current month chef announcements, opening hours, photographs.',
+    supports: 'Brand handle, hours (Tue–Th 17:30–00:00, Fr–Su 17:30–02:00), follower context (1,592 followers, 245 posts as of June 2026).',
   },
   {
-    id: 'longlai-maps',
-    title:    'Google Maps · Longlai pin',
-    author:   'Maps listing',
+    id: 'longlai-maps-listing',
+    title:    'Longlai · Google Maps listing — venue page',
+    author:   'Google Maps · venue listing + user-contributed photos',
     date:     'continuous',
     url:      'https://maps.app.goo.gl/KLkF21SE6hSKbnWW7',
-    supports: 'Address (13/9 Anuwong Rd, Chakkrawat), pin coordinates.',
+    supports: 'Address (13/9 Anuwong Rd, Chakkrawat), coordinates, rating (4.9 / 55 reviews), price band (฿200–400), and the five user-contributed photographs of the venue used on this page: shopfront in daylight, twin turntables at the window, the record wall, the bar with cocktail + snack, and the room at night. Each cross-checked against the yellow signage in the Lufthansa / Adam Birkan press photo to confirm Anuwong (not the unrelated Pathum Thani "Longlai Home Cafe & Bar").',
   },
   {
     id: 'fridaybangkok-vinyl-bars',
