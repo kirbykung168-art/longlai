@@ -87,8 +87,12 @@ html, body {
     radial-gradient(circle at center, var(--pop) 0%, var(--pop) 70%, var(--pop-d) 100%);
 }
 
+/* Disc spin: animation-duration reads from a CSS custom property so a
+   framer motion value on a parent (--spin-dur) can speed it up/slow
+   it down on scroll. The CSS custom property cascades; animation-
+   duration alone does not. Audit-pass-3 fix. */
 .spin-disc {
-  animation: spin-disc 3.6s linear infinite;
+  animation: spin-disc var(--spin-dur, 3.6s) linear infinite;
   transform-origin: 50% 50%;
 }
 @keyframes spin-disc {
@@ -128,11 +132,7 @@ html, body {
   to   { transform: scaleY(1);   opacity: 1; }
 }
 
-/* VINYL CRACKLE GRAIN OVERLAY
-   Audit pass 2: per-dot opacity bumped (0.10/0.08/0.07/0.05/0.06
-   -> 0.18/0.15/0.12/0.10/0.10) and overall opacity bumped 0.55
-   -> 0.85, so the analog dust + scratch layer actually registers
-   at desktop scale - the way you'd see dust on a real sleeve. */
+/* VINYL CRACKLE GRAIN OVERLAY */
 .vinyl-crackle::before {
   content: '';
   position: absolute; inset: 0;
