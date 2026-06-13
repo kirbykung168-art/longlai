@@ -1,25 +1,28 @@
 'use client';
 
-import { COPY } from '@/lib/content';
+import { COPY, PHOTOS } from '@/lib/content';
 import { useLocale } from './LanguageProvider';
 import Reveal from './Reveal';
 
 /**
- * SLEEVES — a hand-arranged wall of LP sleeves + polaroid snapshots
- * from past chef nights. Each tile is rotated -3 to +3 degrees on
- * purpose so the wall reads as set-out-by-hand, not a CMS grid.
+ * SLEEVES — the record-sleeve wall.
  *
- * Audit pass 2: the polaroid tiles no longer share one identical
- * concentric-ring graphic. Each polaroid now picks a different
- * motif (overlapping plates / khanom jeen nest / stew pot with
- * chilli / rice bowl with chopsticks) so the wall reads as four
- * distinct moments instead of four copies.
+ * Audit pass 3:
+ *  - The four polaroid tiles now show REAL photographs of the bar
+ *    instead of SVG illustrations. Each photo is a Google Maps
+ *    user-contributed image of Longlai Anuwong, verified against
+ *    the yellow-shopfront signage. The polaroid framing (paper
+ *    border + caption strip below) and the hand-arranged
+ *    -3°/+3° tilt are preserved - the wall still reads as set out
+ *    by hand, not as a CMS grid.
+ *  - Sleeve tiles (A1/A2/A3/B1) stay as graphic LP-sleeve
+ *    illustrations so the wall doesn't become a photo grid; the
+ *    rhythm of sleeve / photo / sleeve / photo reads the way a real
+ *    record-bar's wall does.
  */
 export default function Sleeves() {
   const { locale } = useLocale();
   const s = COPY.sleeves;
-
-  const tiles = TILES;
 
   return (
     <section id="sleeves" className="relative bg-tobacco text-cream py-28 lg:py-36 overflow-hidden border-t border-[var(--rule-amber)]">
@@ -46,19 +49,20 @@ export default function Sleeves() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
-          {tiles.map((t, i) => (
+          {TILES.map((t, i) => (
             <Reveal key={i} delay={(i % 4) * 0.06}>
               <SleeveTile
                 index={i}
                 rotation={ROTATIONS[i % ROTATIONS.length]}
-                kind={t.kind}
-                title={t.title}
-                subtitle={t.subtitle}
-                colour={t.colour}
+                tile={t}
               />
             </Reveal>
           ))}
         </div>
+
+        <p className="mono uppercase tracking-[0.32em] text-[10px] text-cream/45 mt-10 text-right">
+          Photos · Longlai (Google Maps user contributions)
+        </p>
       </div>
     </section>
   );
@@ -66,38 +70,34 @@ export default function Sleeves() {
 
 const ROTATIONS = [-3, -1.4, 1.2, 3, -2.2, 0.8, -1.8, 2.4];
 
-const TILES = [
-  { kind: 'sleeve' as const,   title: 'A1', subtitle: "Northern - chef one's set",      colour: 'pop'     as const },
-  { kind: 'polaroid' as const, title: 'Crispy fish',     subtitle: 'three-flavour, chef one', colour: 'cream' as const },
-  { kind: 'sleeve' as const,   title: 'A2', subtitle: 'Southern - chef two',            colour: 'amber'   as const },
-  { kind: 'polaroid' as const, title: 'Khanom jeen',     subtitle: 'fermented chilli',        colour: 'cream' as const },
-  { kind: 'sleeve' as const,   title: 'A3', subtitle: 'North-East - chef three',        colour: 'tobacco' as const },
-  { kind: 'polaroid' as const, title: 'Massaman',        subtitle: 'B-side standard',         colour: 'cream' as const },
-  { kind: 'sleeve' as const,   title: 'B1', subtitle: 'House standards',                colour: 'amber'   as const },
-  { kind: 'polaroid' as const, title: 'Crab fried rice', subtitle: 'jasmine, for two',        colour: 'cream' as const },
+type Tile =
+  | { kind: 'sleeve';   title: string; subtitle: string; colour: 'pop' | 'amber' | 'tobacco' | 'cream' }
+  | { kind: 'polaroid'; title: string; subtitle: string; photo: string; alt: string; objectPos?: string };
+
+const TILES: Tile[] = [
+  { kind: 'sleeve',   title: 'A1', subtitle: "Northern · chef one's set",              colour: 'pop' },
+  { kind: 'polaroid', title: 'On the decks',          subtitle: 'Twin turntables at the window', photo: PHOTOS.turntables,
+    alt: 'A DJ at twin turntables and a mixer inside Longlai, the yellow shopfront windows behind.', objectPos: '50% 50%' },
+  { kind: 'sleeve',   title: 'A2', subtitle: 'Southern · chef two',                    colour: 'amber' },
+  { kind: 'polaroid', title: 'The wall',              subtitle: 'Sleeves and the mural', photo: PHOTOS.vinylWall,
+    alt: 'The record wall at Longlai: shelves of LP sleeves and a hand-painted vinyl mural behind.', objectPos: '60% 45%' },
+  { kind: 'sleeve',   title: 'A3', subtitle: 'North-East · chef three',                colour: 'tobacco' },
+  { kind: 'polaroid', title: 'Late table',            subtitle: 'A glass, a small plate', photo: PHOTOS.barCocktail,
+    alt: 'A glass of wine and a small plate at the Longlai bar under warm red light.', objectPos: '50% 55%' },
+  { kind: 'sleeve',   title: 'B1', subtitle: 'House standards',                        colour: 'amber' },
+  { kind: 'polaroid', title: 'The room',              subtitle: 'A night, a set, friends', photo: PHOTOS.roomNight,
+    alt: 'Inside Longlai at night: friends and a guest performer under warm purple light.', objectPos: '50% 55%' },
 ];
 
 function SleeveTile({
   index,
   rotation,
-  kind,
-  title,
-  subtitle,
-  colour,
+  tile,
 }: {
   index: number;
   rotation: number;
-  kind: 'sleeve' | 'polaroid';
-  title: string;
-  subtitle: string;
-  colour: 'pop' | 'amber' | 'tobacco' | 'cream';
+  tile: Tile;
 }) {
-  const sleeveBg =
-    colour === 'pop'     ? 'bg-pop text-cream' :
-    colour === 'amber'   ? 'bg-amber text-vinyl' :
-    colour === 'tobacco' ? 'bg-vinyl text-cream border border-amber/45' :
-                           'bg-cream text-vinyl';
-
   return (
     <div
       className="relative aspect-square overflow-hidden transition-transform duration-700 ease-groove will-change-transform hover:-translate-y-1 hover:rotate-0"
@@ -106,34 +106,31 @@ function SleeveTile({
         boxShadow: '0 12px 28px rgba(0,0,0,0.32)',
       }}
     >
-      {kind === 'sleeve' ? (
-        <SleeveArt index={index} className={sleeveBg} title={title} subtitle={subtitle} />
-      ) : (
-        <PolaroidArt index={index} title={title} subtitle={subtitle} />
-      )}
+      {tile.kind === 'sleeve'
+        ? <SleeveArt index={index} colour={tile.colour} title={tile.title} subtitle={tile.subtitle} />
+        : <PolaroidPhoto title={tile.title} subtitle={tile.subtitle} photo={tile.photo} alt={tile.alt} objectPos={tile.objectPos} />}
     </div>
   );
 }
 
 function SleeveArt({
   index,
-  className,
+  colour,
   title,
   subtitle,
-}: { index: number; className: string; title: string; subtitle: string }) {
+}: { index: number; colour: 'pop' | 'amber' | 'tobacco' | 'cream'; title: string; subtitle: string }) {
+  const bg =
+    colour === 'pop'     ? 'bg-pop text-cream' :
+    colour === 'amber'   ? 'bg-amber text-vinyl' :
+    colour === 'tobacco' ? 'bg-vinyl text-cream border border-amber/45' :
+                           'bg-cream text-vinyl';
   return (
-    <div className={`relative w-full h-full p-5 flex flex-col justify-between ${className}`}>
+    <div className={`relative w-full h-full p-5 flex flex-col justify-between ${bg}`}>
       <p className="mono uppercase tracking-[0.42em] text-[10px] opacity-65">{title}</p>
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        {index % 4 === 0 && (
-          <div className="w-[58%] h-[58%] rounded-full border-2 border-current opacity-55" />
-        )}
-        {index % 4 === 1 && (
-          <div className="w-[64%] h-2 bg-current opacity-55" />
-        )}
-        {index % 4 === 2 && (
-          <div className="w-[58%] h-[58%] border-2 border-current rotate-45 opacity-55" />
-        )}
+        {index % 4 === 0 && <div className="w-[58%] h-[58%] rounded-full border-2 border-current opacity-55" />}
+        {index % 4 === 1 && <div className="w-[64%] h-2 bg-current opacity-55" />}
+        {index % 4 === 2 && <div className="w-[58%] h-[58%] border-2 border-current rotate-45 opacity-55" />}
         {index % 4 === 3 && (
           <svg viewBox="0 0 100 100" className="w-[58%] h-[58%] opacity-55">
             <path d="M 50 8 L 92 86 L 8 86 Z" fill="none" stroke="currentColor" strokeWidth="3" />
@@ -148,24 +145,32 @@ function SleeveArt({
 }
 
 /**
- * PolaroidArt - each polaroid picks a different motif based on its
- * index so the wall reads as four distinct moments instead of four
- * copies of the same concentric ring (audit pass 2 fix). Indices in
- * TILES are 1, 3, 5, 7 - each gets its own motif.
+ * PolaroidPhoto - the polaroid framing (paper border + caption strip)
+ * stays the same as the SVG version; only the inner photo well swaps
+ * to a real photograph. A subtle vignette stays so the photo reads as
+ * a polaroid rather than a flat product shot.
  */
-function PolaroidArt({ index, title, subtitle }: { index: number; title: string; subtitle: string }) {
-  const renderPhoto =
-    index === 1 ? <PolaroidPlates />     :
-    index === 3 ? <PolaroidKhanomJeen /> :
-    index === 5 ? <PolaroidPot />        :
-                  <PolaroidRiceBowl />;
-
+function PolaroidPhoto({
+  title,
+  subtitle,
+  photo,
+  alt,
+  objectPos,
+}: { title: string; subtitle: string; photo: string; alt: string; objectPos?: string }) {
   return (
     <div className="relative w-full h-full bg-paper p-3 flex flex-col">
       <div className="relative w-full aspect-[1.15/1] bg-tobacco overflow-hidden">
-        {renderPhoto}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={photo}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: objectPos || '50% 50%', filter: 'saturate(0.92) contrast(1.04)' }}
+        />
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(circle at 50% 60%, rgba(217,154,58,0.18) 0%, rgba(0,0,0,0.30) 95%)',
+          background: 'radial-gradient(circle at 50% 60%, rgba(217,154,58,0.12) 0%, rgba(0,0,0,0.28) 95%)',
         }} />
       </div>
       <div className="flex-1 flex flex-col justify-center pt-3 pb-1 px-1">
@@ -173,72 +178,5 @@ function PolaroidArt({ index, title, subtitle }: { index: number; title: string;
         <p className="font-sans text-[10.5px] text-vinyl/65 mt-1">{subtitle}</p>
       </div>
     </div>
-  );
-}
-
-function PolaroidPlates() {
-  return (
-    <svg viewBox="0 0 200 174" className="absolute inset-0 w-full h-full">
-      <ellipse cx="68"  cy="100" rx="52" ry="38" fill="rgba(217,154,58,0.45)" />
-      <ellipse cx="130" cy="92"  rx="48" ry="34" fill="rgba(217,154,58,0.55)" />
-      <ellipse cx="100" cy="120" rx="42" ry="30" fill="rgba(240,227,200,0.18)" />
-      <circle  cx="100" cy="115" r="10" fill="rgba(230,74,38,0.85)" />
-    </svg>
-  );
-}
-
-function PolaroidKhanomJeen() {
-  return (
-    <svg viewBox="0 0 200 174" className="absolute inset-0 w-full h-full">
-      <ellipse cx="100" cy="92" rx="74" ry="56" fill="rgba(240,227,200,0.18)" />
-      <ellipse cx="100" cy="92" rx="52" ry="38" fill="rgba(217,154,58,0.55)" />
-      {Array.from({ length: 14 }).map((_, i) => (
-        <ellipse
-          key={i}
-          cx="100"
-          cy="92"
-          rx={42 - i * 0.6}
-          ry={28 - i * 0.4}
-          fill="none"
-          stroke="rgba(240,227,200,0.55)"
-          strokeWidth="0.6"
-          transform={`rotate(${i * 13} 100 92)`}
-        />
-      ))}
-      <circle cx="100" cy="92" r="5" fill="rgba(230,74,38,0.85)" />
-    </svg>
-  );
-}
-
-function PolaroidPot() {
-  return (
-    <svg viewBox="0 0 200 174" className="absolute inset-0 w-full h-full">
-      <circle cx="100" cy="92" r="62" fill="rgba(58,38,24,0.85)" />
-      <circle cx="100" cy="92" r="54" fill="rgba(217,154,58,0.55)" />
-      <circle cx="100" cy="92" r="36" fill="rgba(240,227,200,0.40)" />
-      <path
-        d="M 90 80 C 100 76, 116 82, 120 96 C 116 94, 108 92, 100 92 C 96 92, 92 90, 90 80 Z"
-        fill="rgba(230,74,38,0.95)"
-      />
-      <path d="M 90 80 L 84 76 L 88 82 Z" fill="rgba(122,138,76,0.85)" />
-    </svg>
-  );
-}
-
-function PolaroidRiceBowl() {
-  return (
-    <svg viewBox="0 0 200 174" className="absolute inset-0 w-full h-full">
-      <ellipse cx="100" cy="100" rx="66" ry="50" fill="rgba(58,38,24,0.75)" />
-      <ellipse cx="100" cy="96"  rx="56" ry="40" fill="rgba(240,227,200,0.70)" />
-      {Array.from({ length: 36 }).map((_, i) => {
-        const a = (i * 47) % 360;
-        const r = 24 + ((i * 7) % 12);
-        const cx = 100 + Math.cos((a * Math.PI) / 180) * r;
-        const cy =  96 + Math.sin((a * Math.PI) / 180) * (r * 0.7);
-        return <circle key={i} cx={cx} cy={cy} r="0.9" fill="rgba(58,38,24,0.45)" />;
-      })}
-      <line x1="32"  y1="40" x2="160" y2="124" stroke="rgba(217,154,58,0.85)" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="42"  y1="32" x2="170" y2="116" stroke="rgba(217,154,58,0.85)" strokeWidth="2.5" strokeLinecap="round" />
-    </svg>
   );
 }

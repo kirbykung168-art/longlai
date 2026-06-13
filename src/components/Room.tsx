@@ -5,19 +5,17 @@ import { useLocale } from './LanguageProvider';
 import Reveal from './Reveal';
 
 /**
- * THE ROOM - the liner-notes manifesto. The Lufthansa / Adam Birkan
- * yellow-storefront photograph sits on the right side. The left is
- * the manifesto: prose + the Note Pongsuang verbatim pull-quote.
+ * THE ROOM — the liner-notes manifesto + the storefront diptych.
  *
- * Header opens with the brand's "© LONGLAI · SIDE A · BANGKOK 2024 -"
- * liner-notes credit line - small, monospace, amber.
- *
- * Audit pass 2:
- *  - The pull-quote left border + opening / closing quotation marks
- *    pulled from pop-red to amber so the whole quotation reads in
- *    one warm vinyl temperature.
- *  - The "Plate I" corner tag pulled from bg-pop / text-cream to
- *    bg-amber / text-vinyl so pop stays scarce.
+ * Audit pass 3:
+ *  - Now a two-plate diptych: Plate I is the Lufthansa / Adam Birkan
+ *    yellow-shopfront night photo (kept verbatim), and Plate II is
+ *    the daytime view of the same window with the LONGLAI · หลงใหล
+ *    bubble logo across the doors (Google Maps user contribution).
+ *    The pair reads as "the same room - night and day" instead of a
+ *    single hero photo, so the storefront finally has scale.
+ *  - Captions in the diptych come from the COPY.room object so they
+ *    translate cleanly.
  */
 export default function Room() {
   const { locale } = useLocale();
@@ -63,35 +61,84 @@ export default function Room() {
         </Reveal>
 
         <Reveal delay={0.2} className="lg:col-span-6">
-          <figure className="relative">
-            <div className="relative aspect-[4/3] overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={PHOTOS.storefrontWide}
-                srcSet={`${PHOTOS.storefront} 1200w, ${PHOTOS.storefrontWide} 1800w`}
-                sizes="(max-width: 1024px) 100vw, 45vw"
-                alt={`Night view of the brightly-lit yellow Longlai storefront on Anuwong Road, Bangkok - photo by Adam Birkan for Lufthansa Discover.`}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover object-[50%_55%]"
-                style={{ filter: 'contrast(1.04) saturate(0.95)' }}
-              />
-              <div className="absolute inset-0 pointer-events-none" style={{
-                background:
-                  'radial-gradient(60% 50% at 50% 50%, rgba(217,154,58,0.10) 0%, rgba(14,10,7,0) 70%), linear-gradient(180deg, rgba(14,10,7,0) 60%, rgba(14,10,7,0.32) 100%)',
-              }} />
-              <span className="absolute top-4 left-4 bg-amber text-vinyl mono uppercase tracking-[0.32em] text-[10px] px-3 py-1.5">
-                Plate I
-              </span>
-              <span aria-hidden className="absolute pointer-events-none" style={{ top: 10, left: 10, width: 22, height: 22, borderTop: '1.2px solid var(--amber)', borderLeft: '1.2px solid var(--amber)' }} />
-              <span aria-hidden className="absolute pointer-events-none" style={{ bottom: 10, right: 10, width: 22, height: 22, borderBottom: '1.2px solid var(--amber)', borderRight: '1.2px solid var(--amber)' }} />
-            </div>
-            <figcaption className="mono uppercase tracking-[0.32em] text-[10px] text-cream/55 mt-6">
-              {BRAND.pressPhotoCredit}
-            </figcaption>
-          </figure>
+          <div className="grid grid-cols-1 gap-5">
+            <Plate
+              tag="Plate I"
+              photo={PHOTOS.storefrontWide}
+              srcSet={`${PHOTOS.storefront} 1200w, ${PHOTOS.storefrontWide} 1800w`}
+              alt="Night view of the brightly-lit yellow Longlai storefront on Anuwong Road, Bangkok - photo by Adam Birkan for Lufthansa Discover."
+              caption={r.plate1Caption[locale]}
+              credit={BRAND.pressPhotoCredit}
+              aspect="aspect-[4/3]"
+              objectPos="50% 55%"
+              eager
+            />
+            <Plate
+              tag="Plate II"
+              photo={PHOTOS.storefrontDay}
+              alt="Daytime view of the Longlai shopfront with the bar's bubble logo across the doors and the chalk-graffitied window frame."
+              caption={r.plate2Caption[locale]}
+              credit="Photo · Longlai (Google Maps · user contribution)"
+              aspect="aspect-[4/5] sm:aspect-[4/3]"
+              objectPos="50% 40%"
+            />
+          </div>
         </Reveal>
       </div>
     </section>
+  );
+}
+
+function Plate({
+  tag,
+  photo,
+  srcSet,
+  alt,
+  caption,
+  credit,
+  aspect,
+  objectPos,
+  eager,
+}: {
+  tag: string;
+  photo: string;
+  srcSet?: string;
+  alt: string;
+  caption: string;
+  credit: string;
+  aspect: string;
+  objectPos: string;
+  eager?: boolean;
+}) {
+  return (
+    <figure className="relative">
+      <div className={`relative ${aspect} overflow-hidden`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={photo}
+          {...(srcSet ? { srcSet } : {})}
+          sizes="(max-width: 1024px) 100vw, 45vw"
+          alt={alt}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ objectPosition: objectPos, filter: 'contrast(1.04) saturate(0.95)' }}
+        />
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background:
+            'radial-gradient(60% 50% at 50% 50%, rgba(217,154,58,0.10) 0%, rgba(14,10,7,0) 70%), linear-gradient(180deg, rgba(14,10,7,0) 60%, rgba(14,10,7,0.32) 100%)',
+        }} />
+        <span className="absolute top-4 left-4 bg-amber text-vinyl mono uppercase tracking-[0.32em] text-[10px] px-3 py-1.5">
+          {tag}
+        </span>
+        <span aria-hidden className="absolute pointer-events-none" style={{ top: 10, left: 10, width: 22, height: 22, borderTop: '1.2px solid var(--amber)', borderLeft: '1.2px solid var(--amber)' }} />
+        <span aria-hidden className="absolute pointer-events-none" style={{ bottom: 10, right: 10, width: 22, height: 22, borderBottom: '1.2px solid var(--amber)', borderRight: '1.2px solid var(--amber)' }} />
+      </div>
+      <figcaption className="mono uppercase tracking-[0.32em] text-[10px] text-cream/55 mt-4 flex flex-wrap gap-x-4 gap-y-1">
+        <span>{caption}</span>
+        <span className="text-cream/40">&middot;</span>
+        <span className="text-cream/45">{credit}</span>
+      </figcaption>
+    </figure>
   );
 }
