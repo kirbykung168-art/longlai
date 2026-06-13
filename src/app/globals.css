@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 :root {
-  /* analog 70s/80s sleeve palette */
   --vinyl:    #0e0a07;
   --tobacco:  #3a2618;
   --amber:    #d99a3a;
@@ -51,25 +50,14 @@ html, body {
   transition: all 700ms var(--groove);
   border: 1px solid transparent;
 }
-.btn-pop {
-  background: var(--pop);
-  color: var(--cream);
-}
+.btn-pop   { background: var(--pop); color: var(--cream); }
 .btn-pop:hover { background: var(--pop-d); transform: translateY(-1px); }
-.btn-ghost {
-  background: transparent;
-  color: var(--cream);
-  border-color: var(--rule-amber);
-}
+.btn-ghost { background: transparent; color: var(--cream); border-color: var(--rule-amber); }
 .btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
 .btn-arrow { transition: transform 400ms var(--needle); }
 .btn:hover .btn-arrow { transform: translateX(4px); }
 
-.amber-rule {
-  display: inline-block;
-  width: 48px; height: 1px;
-  background: var(--amber);
-}
+.amber-rule { display: inline-block; width: 48px; height: 1px; background: var(--amber); }
 .amber-rule.wide { width: 96px; }
 
 .record-grooves {
@@ -87,12 +75,18 @@ html, body {
     radial-gradient(circle at center, var(--pop) 0%, var(--pop) 70%, var(--pop-d) 100%);
 }
 
-/* Disc spin: animation-duration reads from a CSS custom property so a
-   framer motion value on a parent (--spin-dur) can speed it up/slow
-   it down on scroll. The CSS custom property cascades; animation-
-   duration alone does not. Audit-pass-3 fix. */
+/* Audit pass 4 - revert to fixed 3.6s. The previous --spin-dur
+   custom property approach was technically correct CSS, but framer-
+   motion's per-frame inline-style updates to the parent's --spin-dur
+   (from useSpring/useMotionTemplate, which emit on every animation
+   frame even at idle) silently RESET the CSS animation each frame,
+   leaving currentTime stuck at 0. Result: the disc reported
+   "running" but never advanced past identity transform. Fixed
+   3.6s sidesteps the issue. Scroll-velocity modulation can be
+   re-added later via framer's animate API driving a MotionValue
+   directly, not via CSS custom property. */
 .spin-disc {
-  animation: spin-disc var(--spin-dur, 3.6s) linear infinite;
+  animation: spin-disc 3.6s linear infinite;
   transform-origin: 50% 50%;
 }
 @keyframes spin-disc {
@@ -132,7 +126,6 @@ html, body {
   to   { transform: scaleY(1);   opacity: 1; }
 }
 
-/* VINYL CRACKLE GRAIN OVERLAY */
 .vinyl-crackle::before {
   content: '';
   position: absolute; inset: 0;
@@ -177,7 +170,6 @@ html, body {
 
 .gold-thread {
   height: 1px;
-  background: linear-gradient(90deg,
-    transparent 0%, var(--amber) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, var(--amber) 50%, transparent 100%);
   opacity: 0.55;
 }
