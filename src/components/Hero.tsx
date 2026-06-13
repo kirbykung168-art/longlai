@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useTransform, useSpring, useVelocity, useMotionTemplate } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { COPY, PHOTOS } from '@/lib/content';
 import { useLocale } from './LanguageProvider';
@@ -8,24 +8,22 @@ import { useLocale } from './LanguageProvider';
 /**
  * HERO - the signature moment.
  *
- * Audit pass 4 fix - disc rotation visibility.
- *   The CSS .spin-disc animation HAD been running correctly all
- *   along (getAnimations() reports playState=running with rotating
- *   transform matrices). But the rotation was visually invisible
- *   because the .spin-disc class was only on the GROOVES layer -
- *   concentric circles, so rotation produces zero apparent motion.
- *   The wordmark SVG ("LONGLAI / BANGKOK 2024 - SIDE A") was on a
- *   separate, non-rotating sibling div, so the disc's spin never
- *   showed up on the page.
- *
- *   Fix: hoist .spin-disc onto the outer wrapper inside Record so
- *   everything asymmetric (the wordmark text, the label colour, the
- *   inner ring) rotates as a single unit. The white "shine"
- *   highlight stays outside the spin since stage lighting wouldn't
- *   move with the disc.
- *
- *   The --spin-dur custom property and scroll-velocity wiring from
- *   audit pass 3 are preserved unchanged.
+ * Audit pass 4 (revised):
+ *  - Disc spin is now a fixed 3.6s CSS animation, no longer driven
+ *    by a CSS custom property updated by framer. The previous
+ *    --spin-dur cascade looked correct in isolation but framer's
+ *    useSpring/useMotionTemplate emit on every animation frame even
+ *    at idle - each emission rewrote the parent's inline style,
+ *    which silently restarted any CSS animation that read the
+ *    custom property via var(). Result: animation reported
+ *    "running" but stuck at currentTime: 0. Reverting to a fixed
+ *    duration on .spin-disc keeps the disc visibly spinning.
+ *  - Rewind tilt stays. Applied via framer to a wrapper motion.div
+ *    that does NOT also carry a CSS custom property, so the CSS
+ *    animation on the .spin-disc descendant runs cleanly.
+ *  - Scroll-velocity disc speed-up is parked for now; can be added
+ *    later by driving rotation purely in framer (a motion value
+ *    that's tween-animated, not a CSS animation).
  */
 export default function Hero() {
   const { locale } = useLocale();
@@ -43,12 +41,8 @@ export default function Hero() {
   const scrollVel   = useVelocity(scrollY);
   const smoothVel   = useSpring(scrollVel, { stiffness: 60, damping: 18 });
 
-  const spinSeconds = useTransform(smoothVel, (v) => {
-    const mag = Math.min(Math.abs(v), 4000);
-    return (3.6 - (mag / 4000) * 2.6).toFixed(2);
-  });
-  const spinDur = useMotionTemplate`${spinSeconds}s`;
-
+  // Rewind tilt - only on negative velocity (scroll up). Lower
+  // threshold (1500) so normal upward scrolls register.
   const rewindTilt = useTransform(smoothVel, (v) => {
     if (v >= 0) return 0;
     const mag = Math.min(Math.abs(v), 1500);
@@ -87,16 +81,12 @@ export default function Hero() {
           <div className="relative w-[min(86vw,560px)] aspect-square">
             <Tonearm reduced={!!reduced} />
 
+            {/* Rewind tilt wrapper - rotate-only. No CSS custom
+                properties here so the descendant .spin-disc CSS
+                animation runs uninterrupted. */}
             <motion.div
               className="absolute inset-0"
-              style={
-                reduced
-                  ? undefined
-                  : {
-                      rotate: rewindTilt,
-                      ['--spin-dur' as string]: spinDur as unknown as string,
-                    }
-              }
+              style={reduced ? undefined : { rotate: rewindTilt }}
             >
               <Record locale={locale} title={COPY.hero.title[locale]} />
             </motion.div>
@@ -159,24 +149,15 @@ export default function Hero() {
   );
 }
 
-/**
- * Record - the big disc.
- *
- * Audit pass 4: the .spin-disc class is now on the OUTER rotating
- * wrapper that contains the grooves, the inner ring, the label, AND
- * the wordmark SVG. Previously .spin-disc was only on the grooves
- * (concentric, so rotation was invisible) while the wordmark sat on
- * a separate, never-rotating sibling div. The "shine" highlight
- * stays outside the spin so the light source feels fixed in the room.
- */
 function Record({ locale, title }: { locale: string; title: string }) {
   const bottomArcText = locale === 'en'
     ? 'Bangkok 2024 · Side A'
     : 'กรุงเทพ 2024 · Side A';
   return (
     <div className="relative w-full h-full">
-      {/* The rotating disc-as-a-whole - grooves, ring, label, wordmark.
-          Everything asymmetric goes here so the rotation reads. */}
+      {/* Rotating disc - .spin-disc on the wrapper so the wordmark
+          (which is the only visible asymmetric thing) rotates with
+          the grooves and label. */}
       <div className="absolute inset-0 spin-disc">
         <div className="absolute inset-0 rounded-full record-grooves" />
         <div className="absolute inset-[28%] rounded-full border border-amber/40" />
@@ -214,7 +195,7 @@ function Record({ locale, title }: { locale: string; title: string }) {
         </div>
       </div>
 
-      {/* Static shine - the room's light source doesn't move with the disc. */}
+      {/* Static shine - the room's light source doesn't move. */}
       <div
         className="absolute inset-0 rounded-full pointer-events-none"
         style={{
