@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Bowlby_One, IBM_Plex_Mono, Inter, Cormorant_Garamond, Noto_Sans_Thai } from 'next/font/google';
 import './globals.css';
 import LanguageProvider from '@/components/LanguageProvider';
@@ -42,11 +42,31 @@ const thai = Noto_Sans_Thai({
   variable: '--font-thai',
 });
 
+export const viewport: Viewport = {
+  themeColor:    '#0e0a07',
+  colorScheme:   'dark',
+  width:         'device-width',
+  initialScale:  1,
+};
+
 export const metadata: Metadata = {
   title: 'Longlai · Vinyl bar with rotating guest chefs · 13/9 Anuwong, Bangkok',
   description:
     'A vinyl bar at the edge of Chinatown where young guest chefs take turns in the kitchen and the records spin. Reserve a seat — chef nights sell out.',
   metadataBase: new URL('https://longlai.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
+  keywords: [
+    'Longlai',
+    'ล่องลอย',
+    'vinyl bar Bangkok',
+    'Anuwong Road',
+    'Chinatown Bangkok',
+    'Song Wat',
+    'guest chef Bangkok',
+    'listening bar',
+  ],
   openGraph: {
     title: 'Longlai · Vinyl bar with rotating guest chefs · Bangkok',
     description:
@@ -55,14 +75,28 @@ export const metadata: Metadata = {
     siteName: 'Longlai',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url:    '/images/storefront-day.jpg',
+        width:  1200,
+        height: 630,
+        alt:    'Yellow shopfront of Longlai on Anuwong Road, Bangkok',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Longlai · Vinyl bar with rotating guest chefs · Bangkok',
     description:
       'Records play, not playlists. Young guest chefs take turns in the kitchen each month.',
+    images: ['/images/storefront-day.jpg'],
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
