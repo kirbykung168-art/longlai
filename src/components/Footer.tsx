@@ -17,6 +17,15 @@ export default function Footer() {
   return (
     <footer className="relative bg-groove text-cream/65 py-14 border-t border-[var(--rule-amber)]">
       <div className="absolute top-0 left-0 right-0 gold-thread" />
+
+      {/* Tribute disclosure band — always visible above the credits row. */}
+      <div className="relative mx-auto max-w-[1480px] px-6 lg:px-10 mb-10 pb-8 border-b border-[var(--rule)]">
+        <p className="mono uppercase tracking-[0.32em] text-[10px] text-cream/55 leading-relaxed text-center lg:text-left" lang={locale}>
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber/80 align-middle mr-3" aria-hidden />
+          {COPY.footer.builtBy[locale]}
+        </p>
+      </div>
+
       <div className="relative mx-auto max-w-[1480px] px-6 lg:px-10 grid lg:grid-cols-4 gap-8 items-start">
         <div>
           <p className="display-it text-cream text-[22px]">Longlai &middot; ล่องลอย</p>
@@ -45,8 +54,8 @@ export default function Footer() {
           <a href={BRAND.pressPhotoCreditUrl} target="_blank" rel="noreferrer" className="block font-sans text-[13.5px] hover:text-amber transition-colors duration-500">
             {BRAND.pressPhotoCredit} &uarr;&#xfe0e;
           </a>
-          <p className="mono uppercase tracking-[0.32em] text-[10px] text-cream/45 mt-4 lg:mt-6" lang={locale}>
-            {COPY.footer.builtBy[locale]}
+          <p className="mono uppercase tracking-[0.32em] text-[9.5px] text-cream/35 mt-4 lg:mt-6" lang={locale}>
+            <a href="/sources" className="hover:text-amber transition-colors duration-500">Read what we cited &rarr;</a>
           </p>
         </div>
       </div>
