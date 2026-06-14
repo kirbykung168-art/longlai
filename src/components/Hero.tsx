@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import { COPY, PHOTOS } from '@/lib/content';
+import { BRAND, COPY, PHOTOS } from '@/lib/content';
 import { useLocale } from './LanguageProvider';
 
 /**
@@ -132,7 +132,14 @@ export default function Hero() {
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <a href="#reserve" className="btn btn-pop" lang={locale}>
+            <a
+              href={BRAND.dmUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="btn btn-pop"
+              lang={locale}
+              aria-label={locale === 'th' ? 'เปิด DM Instagram กับ @longlai.bar เพื่อจอง' : 'Open a direct Instagram DM with @longlai.bar to reserve'}
+            >
               {COPY.hero.ctaReserve[locale]} <span className="btn-arrow">&rarr;</span>
             </a>
             <a href="#now" className="btn btn-ghost" lang={locale}>
