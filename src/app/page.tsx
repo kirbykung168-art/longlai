@@ -34,7 +34,7 @@ export default function Home() {
         name:    BRAND.name,
         alternateName: BRAND.nameThai,
         url:     'https://longlai.vercel.app',
-        image:   ['https://longlai.vercel.app/og.jpg'],
+        image:   ['https://longlai.vercel.app/images/storefront-day.jpg'],
         address: {
           '@type': 'PostalAddress',
           streetAddress:   BRAND.addressLine1,
@@ -49,7 +49,7 @@ export default function Home() {
           longitude: BRAND.lng,
         },
         servesCuisine:  ['Thai', 'Vinyl bar', 'Modern Thai · rotating guest chefs'],
-        openingHours:  ['Tu-Su 10:00-26:00'],
+        openingHours:  ['Tu-Th 17:30-24:00', 'Fr-Su 17:30-26:00'],
         priceRange:    '฿฿',
         sameAs: [BRAND.instagramUrl],
         description:   'Vinyl bar at the edge of Chinatown where young guest chefs take turns in the kitchen each month and records play, not playlists.',
