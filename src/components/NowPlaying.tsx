@@ -115,11 +115,17 @@ export default function NowPlaying() {
             </blockquote>
 
             <div className="mt-9 flex items-center gap-5">
-              <a href="#reserve" className="btn btn-pop">
+              <a
+                href={BRAND.dmUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-pop"
+                aria-label={locale === 'th' ? 'เปิด DM Instagram กับ @longlai.bar เพื่อจอง' : 'Open a direct Instagram DM with @longlai.bar to reserve'}
+              >
                 {COPY.hero.ctaReserve[locale]} <span className="btn-arrow">&rarr;</span>
               </a>
               <a
-                href={BRAND.instagramUrl}
+                href={BRAND.dmUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="mono uppercase tracking-[0.32em] text-[10px] text-vinyl/65 hover:text-amber transition-colors duration-500"
