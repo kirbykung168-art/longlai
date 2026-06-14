@@ -28,8 +28,8 @@ export const BRAND = {
   addressLine2: 'Khwaeng Chakkrawat, Bangkok 10100',
   district:     'Chakkrawat · Chinatown / Song Wat fringe',
 
-  hoursOpen:    'Tue · Wed · Thu · Fri · Sat · Sun · 10 AM – 2 AM',
-  hoursClosed:  'Closed Mondays',
+  hoursOpen:    'Tue–Thu · 17:30 – 00:00  ·  Fri–Sun · 17:30 – 02:00',
+  hoursClosed:  'Closed Mondays · Cafe temporarily closed',
 
   rotationModel: 'monthly',
 
@@ -37,6 +37,8 @@ export const BRAND = {
 
   instagramHandle: '@longlai.bar',
   instagramUrl:    'https://www.instagram.com/longlai.bar/',
+  // Direct DM deep-link — opens a new IG DM thread to @longlai.bar in the app on mobile, the web client on desktop. Saves a click on sellout nights.
+  dmUrl:           'https://ig.me/m/longlai.bar',
   mapsUrl:         'https://maps.app.goo.gl/KLkF21SE6hSKbnWW7',
 
   pressPhotoCredit:    'Photograph · Adam Birkan for Lufthansa Discover',
@@ -46,8 +48,8 @@ export const BRAND = {
   lng: 100.5045,
 
   reserveLine: {
-    en: 'Reserve via Instagram DM · @longlai.bar',
-    th: 'จองที่นั่ง · DM Instagram @longlai.bar',
+    en: 'DM @longlai.bar to reserve',
+    th: 'DM @longlai.bar เพื่อจอง',
   } as Bilingual,
 } as const;
 
@@ -168,10 +170,10 @@ export const COPY = {
     eyebrow: { en: 'Tracklist', th: 'แทร็กลิสต์' } as Bilingual,
     title:   { en: 'Side A · Side B.', th: 'ด้าน A · ด้าน B' } as Bilingual,
     intro: {
-      en: 'The menu is pressed like a 12-inch. Side A is the chef-of-the-month set. Side B is the house standards — always on rotation. Runtimes double as prices: 02:55 reads ₿255.',
-      th: 'เมนูถูกอัดเหมือน LP 12 นิ้ว · ด้าน A คือเซ็ตของเชฟประจำเดือน · ด้าน B คือของประจำร้าน · ความยาวเพลงคือราคา 02:55 = ₿255',
+      en: 'The menu is pressed like a 12-inch. Side A is the chef-of-the-month set. Side B is the house standards — always on rotation. Runtimes double as prices: 02:55 reads ฿255.',
+      th: 'เมนูถูกอัดเหมือน LP 12 นิ้ว · ด้าน A คือเซ็ตของเชฟประจำเดือน · ด้าน B คือของประจำร้าน · ความยาวเพลงคือราคา 02:55 = ฿255',
     } as Bilingual,
-    runtimeNote: { en: 'Runtimes ≈ prices in baht. A1 02:55 is ₿255.', th: 'เวลา ≈ ราคาบาท · A1 02:55 = ₿255' } as Bilingual,
+    runtimeNote: { en: 'Runtimes ≈ prices in baht. A1 02:55 is ฿255.', th: 'เวลา ≈ ราคาบาท · A1 02:55 = ฿255' } as Bilingual,
   },
 
   room: {
@@ -207,8 +209,8 @@ export const COPY = {
       th: 'ค่ำคืนเชฟมีจำกัด มีวันแน่นอน และเต็มเร็ว · DM ทาง Instagram บอกวันและจำนวนคน เราจะตอบกลับยืนยัน',
     } as Bilingual,
     walkInsNote: {
-      en: 'Walk-ins welcome from 10 AM for coffee, daytime plates, and afternoon listening sessions.',
-      th: 'นั่งเลยได้ตั้งแต่ 10 โมงเช้า · กาแฟ จานกลางวัน และฟังเพลงช่วงบ่าย',
+      en: 'Walk-ins welcome from 17:30 — but chef nights sell out, so a DM ahead is the safe play. Cafe temporarily closed (not dead, just recharging).',
+      th: 'วอล์กอินได้ตั้งแต่ 17:30 · แต่ค่ำคืนเชฟเต็มเร็ว ทักก่อนชัวร์กว่า · คาเฟ่ปิดชั่วคราว (พักก่อน ยังไม่ตาย)',
     } as Bilingual,
   },
 
@@ -227,8 +229,12 @@ export const COPY = {
 
   footer: {
     builtBy: {
-      en: 'A tribute site. Not affiliated.',
-      th: 'เว็บอุทิศ ไม่มีส่วนเกี่ยวข้องกับร้าน',
+      en: 'A fan-built tribute site. Not affiliated with Longlai · @longlai.bar.',
+      th: 'เว็บไซต์อุทิศโดยแฟน · ไม่มีส่วนเกี่ยวข้องกับร้าน Longlai · @longlai.bar',
+    } as Bilingual,
+    tributeShort: {
+      en: 'Tribute · not affiliated',
+      th: 'เว็บอุทิศ · ไม่มีส่วนเกี่ยวข้อง',
     } as Bilingual,
   },
 } as const;
