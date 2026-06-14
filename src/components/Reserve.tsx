@@ -41,11 +41,12 @@ export default function Reserve() {
 
           <div className="mt-11 flex flex-col sm:flex-row items-center justify-center gap-5">
             <a
-              href={BRAND.instagramUrl}
+              href={BRAND.dmUrl}
               target="_blank"
               rel="noreferrer"
               className="btn btn-pop"
               lang={locale}
+              aria-label={locale === 'th' ? 'เปิด DM Instagram กับ @longlai.bar เพื่อจอง' : 'Open a direct Instagram DM with @longlai.bar to reserve'}
             >
               {BRAND.reserveLine[locale]} <span className="btn-arrow">↗</span>
             </a>
