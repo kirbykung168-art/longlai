@@ -90,15 +90,18 @@ export default function Nav() {
           <div className="flex items-center gap-5">
             <div className="hidden md:block"><LangToggle /></div>
             <a
-              href="#reserve"
-              className="hidden md:inline-flex items-center gap-2 mono uppercase tracking-[0.32em] text-[10.5px] text-cream bg-pop hover:bg-pop-d transition-colors duration-700 ease-groove px-5 py-3"
+              href={BRAND.dmUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden md:inline-flex items-center gap-2 mono uppercase tracking-[0.32em] text-[10.5px] text-cream bg-pop hover:bg-pop-d transition-colors duration-700 ease-groove px-5 py-3 min-h-[44px]"
               lang={locale}
+              aria-label={locale === 'th' ? 'เปิด DM Instagram กับ @longlai.bar เพื่อจอง' : 'Open a direct Instagram DM with @longlai.bar to reserve'}
             >
               {COPY.nav.reserve[locale]} <span className="text-[9px]">↗</span>
             </a>
             <button
               type="button"
-              className="lg:hidden flex flex-col gap-1.5 p-2"
+              className="lg:hidden flex flex-col gap-1.5 p-3 min-w-[44px] min-h-[44px] items-center justify-center"
               onClick={() => setOpen((o) => !o)}
               aria-label="Toggle menu"
               aria-expanded={open}
@@ -133,10 +136,13 @@ export default function Nav() {
           ))}
           <div className="mt-6"><LangToggle /></div>
           <a
-            href="#reserve"
+            href={BRAND.dmUrl}
+            target="_blank"
+            rel="noreferrer"
             onClick={() => setOpen(false)}
-            className="mono uppercase tracking-[0.32em] text-[12px] text-cream bg-pop px-7 py-4 mt-4"
+            className="mono uppercase tracking-[0.32em] text-[12px] text-cream bg-pop px-7 py-4 mt-4 min-h-[48px] inline-flex items-center justify-center"
             lang={locale}
+            aria-label={locale === 'th' ? 'เปิด DM Instagram กับ @longlai.bar เพื่อจอง' : 'Open a direct Instagram DM with @longlai.bar to reserve'}
           >
             {COPY.nav.reserve[locale]} ↗
           </a>
